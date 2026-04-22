@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shivam Telecom — Field Ops Dashboard v4</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --navy: #0f1e3d;
+      --navy2: #162649;
+      --navy3: #1e3361;
+      --blue: #185FA5;
+      --blue2: #2176c7;
+      --blue3: #e8f1fb;
+      --red: #c0392b;
+      --red2: #fff0ef;
+      --green: #15803d;
+      --green2: #f0fdf4;
+      --amber: #b45309;
+      --amber2: #fffbeb;
+      --purple: #5b21b6;
+      --purple2: #f5f3ff;
+      --teal: #0d6b5e;
+      --teal2: #f0faf8;
+      --gray: #f4f6fb;
+      --border: #dce2ef;
+      --text: #0f1e3d;
+      --text2: #4a5578;
+      --text3: #8895b3;
+      --font: 'IBM Plex Sans', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --rad: 8px;
+      --rad2: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: var(--font);
+      background: #eef1f8;
+      min-height: 100vh;
+      color: var(--text);
+      font-size: 13px
+    }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      background: var(--navy);
+      color: #fff;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--navy3)
+    }
+
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .topnav-brand .logo {
+      width: 32px;
+      height: 32px;
+      background: var(--blue2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px
+    }
+
+    .topnav-brand h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: #fff
+    }
+
+    .topnav-brand span {
+      font-size: 10px;
+      color: #8ba8d0;
+      font-family: var(--mono)
+    }
+
+    .nav-ts {
+      font-size: 10px;
+      color: #8ba8d0;
+      font-family: var(--mono)
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .nav-badge {
+      font-size: 10px;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: var(--mono);
+      color: #c8d8f0
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      background: var(--navy2);
+      display: flex;
+      gap: 2px;
+      padding: 0 20px;
+      overflow-x: auto
+    }
+
+    .tab {
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #8ba8d0;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: all .15s;
+      letter-spacing: .3px;
+      text-transform: uppercase
+    }
+
+    .tab:hover {
+      color: #c8d8f0
+    }
+
+    .tab.active {
+      color: #fff;
+      border-bottom-color: var(--blue2)
+    }
+
+    /* ── LAYOUT ── */
+    .main {
+      padding: 16px 20px;
+      max-width: 1200px;
+      margin: 0 auto
+    }
+
+    .panel {
+      display: none
+    }
+
+    .panel.active {
+      display: block
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: #fff;
+      border-radius: var(--rad2);
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 14px
+    }
+
+    .card-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gray)
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .stat {
+      background: #fff;
+      border-radius: var(--rad2);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      text-align: center;
+      transition: box-shadow .15s
+    }
+
+    .stat:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .1)
+    }
+
+    .stat .val {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: var(--mono);
+      line-height: 1
+    }
+
+    .stat .lbl {
+      font-size: 10px;
+      color: var(--text3);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .stat.red .val {
+      color: var(--red)
+    }
+
+    .stat.blue .val {
+      color: var(--blue)
+    }
+
+    .stat.green .val {
+      color: var(--green)
+    }
+
+    .stat.amber .val {
+      color: var(--amber)
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 140px
+    }
+
+    .field label {
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .3px
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-family: var(--font);
+      transition: border .15s
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(24, 95, 165, .1)
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-size: 11px;
+      font-family: var(--mono)
+    }
+
+    /* ── GRP GRID ── */
+    .grp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 6px;
+      margin-top: 8px
+    }
+
+    .grp-item {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .grp-item label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--navy);
+      width: 100px;
+      flex-shrink: 0
+    }
+
+    .grp-item input {
+      flex: 1;
+      font-size: 10px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-family: var(--mono)
+    }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      font-family: var(--font)
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .1)
+    }
+
+    .btn:active {
+      transform: scale(.97)
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none
+    }
+
+    .btn.primary {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy)
+    }
+
+    .btn.primary:hover {
+      background: var(--navy3)
+    }
+
+    .btn.blue {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue)
+    }
+
+    .btn.blue:hover {
+      background: var(--blue2)
+    }
+
+    .btn.green {
+      background: #15803d;
+      color: #fff;
+      border-color: #15803d
+    }
+
+    .btn.green:hover {
+      background: #166534
+    }
+
+    .btn.red {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red)
+    }
+
+    .btn.red:hover {
+      background: #991b1b
+    }
+
+    .btn.amber {
+      background: #b45309;
+      color: #fff;
+      border-color: #b45309
+    }
+
+    .btn.purple {
+      background: var(--purple);
+      color: #fff;
+      border-color: var(--purple)
+    }
+
+    .btn.teal {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal)
+    }
+
+    .btn.sm {
+      padding: 5px 10px;
+      font-size: 11px
+    }
+
+    /* ── ACTION GRID ── */
+    .act-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .abtn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 14px 8px;
+      border-radius: var(--rad2);
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center
+    }
+
+    .abtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .12)
+    }
+
+    .abtn:active {
+      transform: scale(.97)
+    }
+
+    .abtn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none
+    }
+
+    .abtn .icon {
+      font-size: 24px;
+      line-height: 1
+    }
+
+    .abtn .label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy)
+    }
+
+    .abtn .hint {
+      font-size: 9px;
+      color: var(--text3)
+    }
+
+    .abtn.blue {
+      background: var(--blue3);
+      border-color: #b5d4f4
+    }
+
+    .abtn.blue .label {
+      color: var(--blue)
+    }
+
+    .abtn.green {
+      background: var(--green2);
+      border-color: #86efac
+    }
+
+    .abtn.green .label {
+      color: var(--green)
+    }
+
+    .abtn.red {
+      background: var(--red2);
+      border-color: #fca5a5
+    }
+
+    .abtn.red .label {
+      color: var(--red)
+    }
+
+    .abtn.amber {
+      background: var(--amber2);
+      border-color: #fcd34d
+    }
+
+    .abtn.amber .label {
+      color: var(--amber)
+    }
+
+    .abtn.purple {
+      background: var(--purple2);
+      border-color: #c4b5fd
+    }
+
+    .abtn.purple .label {
+      color: var(--purple)
+    }
+
+    .abtn.teal {
+      background: var(--teal2);
+      border-color: #99f6e4
+    }
+
+    .abtn.teal .label {
+      color: var(--teal)
+    }
+
+    /* ── STATUS BAR ── */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: var(--rad);
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      min-height: 38px
+    }
+
+    .status.idle {
+      background: #f8f9fc;
+      border-color: var(--border);
+      color: var(--text2)
+    }
+
+    .status.ok {
+      background: var(--green2);
+      border-color: #86efac;
+      color: var(--green)
+    }
+
+    .status.err {
+      background: var(--red2);
+      border-color: #fca5a5;
+      color: var(--red)
+    }
+
+    .status.working {
+      background: var(--blue3);
+      border-color: #93c5fd;
+      color: var(--blue)
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #94a3b8
+    }
+
+    .dot.ok {
+      background: #22c55e
+    }
+
+    .dot.err {
+      background: #ef4444
+    }
+
+    .dot.working {
+      background: #3b82f6;
+      animation: pulse .8s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
+    }
+
+    /* ── PROGRESS ── */
+    .prog-wrap {
+      height: 3px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin-top: 6px;
+      display: none;
+      margin-bottom: 6px
+    }
+
+    .prog-bar {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 2px;
+      transition: width .4s
+    }
+
+    /* ── PREVIEW STRIP ── */
+    .preview-strip {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding: 2px 2px 8px;
+      min-height: 0
+    }
+
+    .prev-thumb {
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer
+    }
+
+    .prev-thumb img {
+      width: 130px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: var(--rad);
+      border: 2px solid var(--border);
+      display: block;
+      transition: border .15s
+    }
+
+    .prev-thumb img:hover {
+      border-color: var(--blue)
+    }
+
+    .prev-thumb .del {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 17px;
+      height: 17px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      font-weight: 700
+    }
+
+    .prev-thumb .plbl {
+      font-size: 9px;
+      text-align: center;
+      color: var(--text3);
+      margin-top: 3px;
+      font-family: var(--mono)
+    }
+
+    /* ── REPORT TABLE (visible + capture) ── */
+    #report-canvas {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 960px;
+      background: #fff;
+      font-family: 'IBM Plex Sans', Arial, sans-serif
+    }
+
+    #report-preview {
+      border-radius: var(--rad2);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 14px
+    }
+
+    .rc-head {
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .rc-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .3px
+    }
+
+    .rc-head-ts {
+      font-size: 10px;
+      opacity: .8;
+      font-family: monospace
+    }
+
+    .rc-sub {
+      background: var(--navy2);
+      color: #c8d8f0;
+      padding: 5px 20px;
+      font-size: 10px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap
+    }
+
+    .rt {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px
+    }
+
+    .rt thead tr:first-child th {
+      background: var(--navy2);
+      color: #fff;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 10.5px;
+      letter-spacing: .2px;
+      border: 1px solid rgba(255, 255, 255, .12)
+    }
+
+    .rt thead tr:last-child th {
+      background: #1e3a70;
+      color: #cdd8f0;
+      padding: 5px 10px;
+      font-size: 10px;
+      border: 1px solid rgba(255, 255, 255, .08)
+    }
+
+    .rt tbody tr:nth-child(even) {
+      background: #f5f7fd
+    }
+
+    .rt tbody tr:nth-child(odd) {
+      background: #fff
+    }
+
+    .rt tbody td {
+      padding: 6px 10px;
+      border: 1px solid #dce3ef;
+      color: #1a1a2e;
+      text-align: center;
+      vertical-align: middle
+    }
+
+    .rt tbody td.td-eng {
+      text-align: left;
+      padding-left: 16px;
+      font-size: 11px;
+      white-space: nowrap
+    }
+
+    .rt tbody td.td-cl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--navy);
+      background: #eef2fc;
+      white-space: nowrap
+    }
+
+    .rt tfoot td {
+      background: var(--navy);
+      color: #fff;
+      font-weight: 700;
+      padding: 7px 10px;
+      text-align: center;
+      font-size: 11px
+    }
+
+    .pend-r {
+      display: inline-block;
+      background: #fde8e8;
+      color: #991b1b;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 700;
+      font-size: 10px
+    }
+
+    .pend-b {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 700;
+      font-size: 10px
+    }
+
+    .zero {
+      color: #c8cfe0
+    }
+
+    .rc-footer {
+      background: var(--navy2);
+      color: #8ba8d0;
+      padding: 6px 20px;
+      font-size: 9px;
+      text-align: center;
+      font-family: monospace
+    }
+
+    /* ── TASK TABLE ── */
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    .task-table th {
+      background: var(--gray);
+      color: var(--text2);
+      padding: 7px 10px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      border-bottom: 2px solid var(--border)
+    }
+
+    .task-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--gray);
+      vertical-align: middle
+    }
+
+    .task-table tr:hover td {
+      background: #f8faff
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700
+    }
+
+    .badge-red {
+      background: #fde8e8;
+      color: #991b1b
+    }
+
+    .badge-blue {
+      background: #dbeafe;
+      color: #1e40af
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #166534
+    }
+
+    .badge-amber {
+      background: #fef3c7;
+      color: #92400e
+    }
+
+    .badge-gray {
+      background: #f1f5f9;
+      color: #475569
+    }
+
+    /* ── CLUSTER PICKER ── */
+    .cluster-picker {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      background: var(--gray);
+      border-radius: var(--rad);
+      border: 1px solid var(--border)
+    }
+
+    .cluster-picker .checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px
+    }
+
+    .cluster-picker label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 5px 10px;
+      transition: all .15s
+    }
+
+    .cluster-picker label:hover {
+      border-color: var(--blue)
+    }
+
+    .cluster-picker input[type=checkbox]:checked+span {
+      color: var(--blue)
+    }
+
+    /* ── LOG AREA ── */
+    .log-box {
+      background: #0f1e3d;
+      border-radius: var(--rad);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #8ba8d0;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.6
+    }
+
+    .log-box .log-ok {
+      color: #4ade80
+    }
+
+    .log-box .log-err {
+      color: #f87171
+    }
+
+    .log-box .log-info {
+      color: #60a5fa
+    }
+
+    .log-box .log-warn {
+      color: #fbbf24
+    }
+
+    /* ── SEND LOG ── */
+    .send-result {
+      background: #fff;
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 8px
+    }
+
+    .send-result .sr-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--gray);
+      font-size: 11px
+    }
+
+    .send-result .sr-row:last-child {
+      border-bottom: none
+    }
+
+    .sr-label {
+      font-weight: 600;
+      color: var(--text)
+    }
+
+    .sr-status {
+      font-size: 10px;
+      font-weight: 700
+    }
+
+    .sr-ok {
+      color: var(--green)
+    }
+
+    .sr-fail {
+      color: var(--red)
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c8cfe0;
+      border-radius: 3px
+    }
+
+    /* ── UTILITY ── */
+    .flex {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .ml-auto {
+      margin-left: auto
+    }
+
+    .mt8 {
+      margin-top: 8px
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 8px
+    }
+
+    /* ── TOAST ── */
+    .toast-wrap {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none
+    }
+
+    .toast {
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--rad);
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .25);
+      transform: translateX(120%);
+      transition: transform .3s;
+      pointer-events: auto;
+      max-width: 280px
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .toast.ok {
+      border-left: 3px solid #22c55e
+    }
+
+    .toast.err {
+      border-left: 3px solid #ef4444
+    }
+
+    .toast.info {
+      border-left: 3px solid #3b82f6
+    }
+
+    /* ── ACTIVITY FEED ── */
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 240px;
+      overflow-y: auto
+    }
+
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--rad);
+      background: var(--gray);
+      font-size: 11px
+    }
+
+    .feed-item .fi-ts {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text3);
+      white-space: nowrap
+    }
+
+    .feed-item .fi-msg {
+      flex: 1
+    }
+
+    /* ── CONFIRM MODAL ── */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-bg.show {
+      display: flex
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: var(--rad2);
+      padding: 24px;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, .25)
+    }
+
+    .modal h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px
+    }
+
+    .modal p {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 18px;
+      line-height: 1.6
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topnav">
+    <div class="topnav-brand">
+      <div class="logo">🏢</div>
+      <div>
+        <h1>SHIVAM TELECOM</h1>
+        <span>Field Operations Dashboard v4</span>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge" id="nav-pending">— pending</span>
+      <span class="nav-ts" id="nav-ts"></span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showPanel('panel-report')">📊 Report &amp; Send</div>
+    <div class="tab" onclick="showPanel('panel-dispatch')">📤 Dispatch Tasks</div>
+    <div class="tab" onclick="showPanel('panel-mark')">✅ Mark Clear</div>
+    <div class="tab" onclick="showPanel('panel-search')">🔍 Search</div>
+    <div class="tab" onclick="showPanel('panel-activity')">📋 Activity</div>
+    <div class="tab" onclick="showPanel('panel-config')">⚙️ Config</div>
+  </div>
+
+  <div class="main">
+
+    <!-- PANEL 1: REPORT & SEND -->
+    <div class="panel active" id="panel-report">
+      <div class="status idle" id="rep-status">
+        <div class="dot" id="rep-dot"></div>
+        <span id="rep-status-text">Ready — load live data or use the actions below.</span>
+      </div>
+      <div class="prog-wrap" id="rep-prog-wrap">
+        <div class="prog-bar" id="rep-prog-bar"></div>
+      </div>
+
+      <div class="stats-row" id="stats-row">
+        <div class="stat red">
+          <div class="val" id="st-fp">—</div>
+          <div class="lbl">Fault Pending</div>
+        </div>
+        <div class="stat blue">
+          <div class="val" id="st-pp">—</div>
+          <div class="lbl">NTC/DISS Pending</div>
+        </div>
+        <div class="stat green">
+          <div class="val" id="st-fc">—</div>
+          <div class="lbl">Fault Cleared</div>
+        </div>
+        <div class="stat amber">
+          <div class="val" id="st-eng">—</div>
+          <div class="lbl">Engineers</div>
+        </div>
+        <div class="stat" style="border-color:#fca5a5">
+          <div class="val" id="st-over" style="color:#7c3aed">—</div>
+          <div class="lbl">Overdue &gt;3d</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">🚀 Actions</span><span id="last-loaded"
+            style="font-size:10px;color:var(--text3)"></span></div>
+        <div class="act-grid">
+          <button class="abtn blue" onclick="loadFromSheet()">
+            <span class="icon">🔄</span><span class="label">Load Live Data</span><span class="hint">Fetch from Google
+              Sheets</span>
+          </button>
+          <button class="abtn" onclick="captureReport()">
+            <span class="icon">📸</span><span class="label">Capture Report</span><span class="hint">Table → PNG
+              image</span>
+          </button>
+          <button class="abtn green" id="btnSendAll" onclick="sendToAll()" disabled>
+            <span class="icon">📲</span><span class="label">Send to All Groups</span><span class="hint">Dispatch to
+              every cluster</span>
+          </button>
+          <button class="abtn teal" id="btnSendSel" onclick="toggleClusterPicker()" disabled>
+            <span class="icon">📍</span><span class="label">Send to Cluster</span><span class="hint">Pick specific
+              groups</span>
+          </button>
+          <button class="abtn amber" onclick="captureAndSendAll()">
+            <span class="icon">⚡</span><span class="label">One-Click Send</span><span class="hint">Capture + send
+              now</span>
+          </button>
+          <button class="abtn red" onclick="captureOverdue()">
+            <span class="icon">🚨</span><span class="label">Overdue Report</span><span class="hint">Pending &gt;3
+              days</span>
+          </button>
+          <button class="abtn purple" onclick="captureEngWorkload()">
+            <span class="icon">👷</span><span class="label">Eng Workload</span><span class="hint">Per-engineer
+              image</span>
+          </button>
+          <button class="abtn" onclick="downloadImg()">
+            <span class="icon">💾</span><span class="label">Download PNG</span><span class="hint">Save to device</span>
+          </button>
+        </div>
+
+        <div class="cluster-picker" id="cluster-picker">
+          <div class="section-label">Select groups to send to:</div>
+          <div class="checks" id="cluster-checks"></div>
+          <button class="btn green" onclick="doSendSelected()">📲 Send to Selected Groups</button>
+        </div>
+
+        <div id="send-result-area"></div>
+      </div>
+
+      <div class="preview-strip" id="preview-strip" style="display:none"></div>
+      <div id="report-preview"></div>
+      <div id="report-canvas"></div>
+    </div>
+
+    <!-- PANEL 2: DISPATCH -->
+    <div class="panel" id="panel-dispatch">
+      <div class="status idle" id="dis-status">
+        <div class="dot" id="dis-dot"></div>
+        <span id="dis-status-text">Select a task type and cluster to begin dispatching.</span>
+      </div>
+      <div class="prog-wrap" id="dis-prog-wrap">
+        <div class="prog-bar" id="dis-prog-bar"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">⚡ Quick Dispatch — All Engineers</span></div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Generates one message per engineer with all
+          their pending Fault + NTC + DISS tasks and sends directly to each engineer's WhatsApp group.</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="loadAndPreviewAll()">👁️ Preview All Engineer Messages</button>
+          <button class="btn green" onclick="confirmDispatchAll()">📤 Dispatch All to Groups</button>
+        </div>
+        <div id="eng-preview-area" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">🔧 Individual Task Dispatch</span></div>
+        <div class="row">
+          <div class="field">
+            <label>Task Type</label>
+            <select id="dis-type" onchange="loadTaskList()">
+              <option value="FAULT">🔴 Fault</option>
+              <option value="NTC">🟡 NTC</option>
+              <option value="DISS">🔵 DISS</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Cluster</label>
+            <select id="dis-cluster" onchange="loadTaskList()">
+              <option value="ALL">All Clusters</option>
+              <option value="VASTRAPUR">VASTRAPUR</option>
+              <option value="RAILWAYPURA">RAILWAYPURA</option>
+              <option value="NARANPURA">NARANPURA</option>
+              <option value="VATVA">VATVA</option>
+              <option value="CENTRAL">CENTRAL</option>
+              <option value="SABARMATI">SABARMATI</option>
+              <option value="NAVRANGPURA">NAVRANGPURA</option>
+              <option value="LC">LC</option>
+              <option value="GBT">GBT</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:1px">
+            <button class="btn blue" onclick="loadTaskList()">Load Tasks</button>
+          </div>
+        </div>
+        <div id="task-list-area">
+          <p style="font-size:12px;color:var(--text3);padding:8px 0">Load live data first (Report &amp; Send → Load Live
+            Data), then select type and cluster.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: MARK CLEAR -->
+    <div class="panel" id="panel-mark">
+      <div class="status idle" id="mark-status">
+        <div class="dot" id="mark-dot"></div>
+        <span id="mark-status-text">Search for a record by phone number to mark it as clear.</span>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">✅ Mark Task as Clear</span></div>
+        <!-- FIX: Added note if no data loaded -->
+        <div id="mark-no-data" style="display:none;padding:8px 0;font-size:12px;color:var(--amber);margin-bottom:8px">⚠️
+          Load live data first for sheet-based lookup. Currently searching local data.</div>
+        <div class="row">
+          <div class="field">
+            <label>Task Type</label>
+            <select id="mark-type">
+              <option value="FAULT">🔴 Fault</option>
+              <option value="NTC">🟡 NTC</option>
+              <option value="DISS">🔵 DISS</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <input id="mark-phone" placeholder="e.g. 079-26860394" onkeydown="if(event.key==='Enter')markSearch()" />
+          </div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:1px">
+            <button class="btn blue" onclick="markSearch()">🔍 Find Record</button>
+          </div>
+        </div>
+        <div id="mark-result"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📋 Recent Clear Actions (This Session)</span></div>
+        <div id="clear-history">
+          <p style="font-size:12px;color:var(--text3);padding:8px 0">No clear actions this session.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: SEARCH -->
+    <div class="panel" id="panel-search">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">🔍 Search Records</span></div>
+        <div class="row">
+          <div class="field" style="flex:3">
+            <label>Search Term</label>
+            <input id="search-q" placeholder="Phone number, customer name, engineer, cluster, status..."
+              onkeydown="if(event.key==='Enter')doSearch()" />
+          </div>
+          <div class="field">
+            <label>Filter by Type</label>
+            <select id="search-type">
+              <option value="ALL">All Types</option>
+              <option value="FAULT">Fault only</option>
+              <option value="NTC">NTC only</option>
+              <option value="DISS">DISS only</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Filter by Status</label>
+            <select id="search-status">
+              <option value="ALL">All Status</option>
+              <option value="pending">Pending only</option>
+              <option value="clear">Clear only</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:1px">
+            <button class="btn blue" onclick="doSearch()">Search</button>
+          </div>
+        </div>
+        <div id="search-results">
+          <p style="font-size:12px;color:var(--text3);padding:8px 0">Load live data first, then search.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 5: ACTIVITY FEED (NEW) -->
+    <div class="panel" id="panel-activity">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">📋 Session Activity Log</span>
+          <button class="btn sm" onclick="clearActivityLog()">Clear</button>
+        </div>
+        <div class="feed" id="activity-feed">
+          <p style="font-size:12px;color:var(--text3);padding:8px 0">No activity yet this session.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📊 Data Summary</span></div>
+        <div id="summary-area">
+          <p style="font-size:12px;color:var(--text3);padding:8px 0">Load live data to see summary.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 6: CONFIG -->
+    <div class="panel" id="panel-config">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">⚙️ WhatsApp API</span></div>
+        <div class="row">
+          <div class="field">
+            <label>Phone Number ID</label>
+            <input id="cfg-pid" value="1122823694240869" />
+          </div>
+          <div class="field">
+            <label>Access Token</label>
+            <input id="cfg-token" type="password" placeholder="EAA..." />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Apps Script Web App URL <span style="font-weight:400">(for live data + mark clear)</span></label>
+            <input id="cfg-url" placeholder="https://script.google.com/macros/s/...exec" />
+          </div>
+        </div>
+        <div class="btn-row mt8">
+          <button class="btn blue" onclick="saveConfig()">💾 Save Config</button>
+          <button class="btn" onclick="testConnection()">🔌 Test Connection</button>
+        </div>
+        <span id="cfg-saved" style="font-size:11px;color:var(--green);margin-left:8px;display:none">✅ Saved!</span>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📱 WhatsApp Group IDs (Cluster Groups)</span></div>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Used for sending report images to cluster
+          groups. Get group ID from the 'from' field in WhatsApp webhook logs.</p>
+        <div class="grp-grid" id="grp-list"></div>
+        <button class="btn blue mt8" style="margin-top:12px" onclick="saveGroups()">💾 Save Group IDs</button>
+        <span id="grp-saved" style="font-size:11px;color:var(--green);margin-left:8px;display:none">✅ Saved!</span>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📊 Manual Data Entry (JSON)</span></div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:10px">If no Apps Script URL is set, paste JSON data
+          here or edit the ROWS array in the source code.</p>
+        <div class="field">
+          <label>JSON Data (array of row objects)</label>
+          <textarea id="cfg-json"
+            placeholder='[{"cl":"CENTRAL","eng":"ALTAF","fa":1,"fc":0,"fp":1,"pa":0,"pc":0,"pp":0},...]'></textarea>
+        </div>
+        <button class="btn blue mt8" onclick="loadFromJSON()">Load from JSON</button>
+      </div>
+
+      <!-- WhatsApp command reference -->
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📋 WhatsApp Bot Commands</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px">
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">menu
+              / 0</div>
+            <div style="font-size:10px;color:var(--text2)">Show main menu</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">1 /
+              allfault</div>
+            <div style="font-size:10px;color:var(--text2)">Dispatch all eng-wise</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">2 /
+              engreport</div>
+            <div style="font-size:10px;color:var(--text2)">Engineer workload report</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">3 /
+              overdue</div>
+            <div style="font-size:10px;color:var(--text2)">Overdue tasks (&gt;3 days)</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">4 /
+              fault</div>
+            <div style="font-size:10px;color:var(--text2)">Individual fault assign</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">5 /
+              ntc</div>
+            <div style="font-size:10px;color:var(--text2)">Individual NTC assign</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">6 /
+              diss</div>
+            <div style="font-size:10px;color:var(--text2)">Individual DISS assign</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">7 /
+              clear</div>
+            <div style="font-size:10px;color:var(--text2)">Mark task as clear</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">8 /
+              summary</div>
+            <div style="font-size:10px;color:var(--text2)">Overall summary</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">9 /
+              search</div>
+            <div style="font-size:10px;color:var(--text2)">Search records</div>
+          </div>
+          <div style="background:#dbeafe;border-radius:var(--rad);padding:8px 10px;border:1px solid #93c5fd">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px">
+              reportimage / ri</div>
+            <div style="font-size:10px;color:#1e40af">Get report summary (text)</div>
+          </div>
+          <div style="background:var(--gray);border-radius:var(--rad);padding:8px 10px">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:3px">
+              today</div>
+            <div style="font-size:10px;color:var(--text2)">Today's activity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-bg" id="confirm-modal">
+    <div class="modal">
+      <h3 id="modal-title">Confirm Action</h3>
+      <p id="modal-body">Are you sure?</p>
+      <div class="modal-btns">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn green" id="modal-ok" onclick="">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-wrap" id="toast-wrap"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    //  CONFIG & DATA
+    // ═══════════════════════════════════════════════════════════
+    const CLUSTERS = [
+      { id: 'vastrapur', label: 'VASTRAPUR' },
+      { id: 'railwaypura', label: 'RAILWAYPURA' },
+      { id: 'naranpura', label: 'NARANPURA' },
+      { id: 'vatva', label: 'VATVA' },
+      { id: 'central', label: 'CENTRAL' },
+      { id: 'sabarmati', label: 'SABARMATI' },
+      { id: 'navrangpura', label: 'NAVRANGPURA' },
+      { id: 'gbt', label: 'GBT' },
+      { id: 'lc', label: 'LC' },
+      { id: 'admin', label: 'Admin / All' },
+    ];
+
+    let ROWS = [
+      { cl: 'CENTRAL', eng: 'ALTAF', fa: 1, fc: 0, fp: 1, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'VARIS', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'ILIYAS / FARHAN', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'GBT', eng: 'MUSTKIM / NILESH / SANJAY', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'MUSTAKIM / SANJAY / NILESH', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'NAVRANGPURA', eng: 'SANJAY / NILESH', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'SABARMATI', eng: 'VINAY / KEYUR', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'VASTRAPUR', eng: 'BUDDHAJI / HARISINGH / ISHWARBHAI', fa: 7, fc: 0, fp: 7, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'PARAKRAM / DHARMESH / ANIL / FESAL', fa: 5, fc: 0, fp: 5, pa: 0, pc: 0, pp: 0 },
+      { cl: 'VATVA', eng: 'UMASHANKAR', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'AKSHAY', fa: 1, fc: 0, fp: 1, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'VICKY', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'NARANPURA', eng: 'JIGNESH', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'HITESH', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'TUSHAR', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'LC', eng: 'KISHORE', fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 },
+      { cl: 'RAILWAYPURA', eng: 'ALI / ZED / JAGDISHBHAI', fa: 1, fc: 0, fp: 1, pa: 0, pc: 0, pp: 0 },
+      { cl: '', eng: 'AKSHAY / DHAVAL / KAIF', fa: 1, fc: 0, fp: 1, pa: 0, pc: 0, pp: 0 },
+    ];
+
+    let FAULT_ROWS = [];
+    let PD_ROWS = [];
+    let capturedBlob = null;
+    // FIX: clearHistory was never initialized properly in original
+    let clearHistory = [];
+    let activityLog = [];
+
+    // ═══════════════════════════════════════════════════════════
+    //  INIT
+    // ═══════════════════════════════════════════════════════════
+    function init() {
+      loadConfig();
+      buildGroupInputs();
+      renderReport(ROWS, 'report-preview');
+      renderReport(ROWS, 'report-canvas');
+      updateStats(ROWS);
+      updateClock();
+      setInterval(updateClock, 30000);
+      // Show no-data notice on mark tab if FAULT_ROWS empty
+      document.getElementById('mark-no-data').style.display = 'block';
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const ts = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + '  ' +
+        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('nav-ts').textContent = ts;
+    }
+
+    function loadConfig() {
+      const s = localStorage.getItem('shivam_config_v4');
+      if (!s) return;
+      try {
+        const cfg = JSON.parse(s);
+        if (cfg.pid) document.getElementById('cfg-pid').value = cfg.pid;
+        if (cfg.token) document.getElementById('cfg-token').value = cfg.token;
+        if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
+        if (cfg.groups) {
+          cfg.groups.forEach(g => {
+            const el = document.getElementById('gid_' + g.id);
+            if (el) el.value = g.val;
+          });
+        }
+      } catch (_) { }
+    }
+
+    function saveConfig() {
+      const groups = CLUSTERS.map(c => ({ id: c.id, val: (document.getElementById('gid_' + c.id) || {}).value || '' }));
+      const cfg = {
+        pid: document.getElementById('cfg-pid').value,
+        token: document.getElementById('cfg-token').value,
+        url: document.getElementById('cfg-url').value,
+        groups
+      };
+      localStorage.setItem('shivam_config_v4', JSON.stringify(cfg));
+      const el = document.getElementById('cfg-saved');
+      el.style.display = 'inline';
+      setTimeout(() => el.style.display = 'none', 2000);
+      showToast('Config saved ✅', 'ok');
+    }
+
+    function saveGroups() {
+      saveConfig();
+      const el = document.getElementById('grp-saved');
+      el.style.display = 'inline';
+      setTimeout(() => el.style.display = 'none', 2000);
+    }
+
+    function buildGroupInputs() {
+      const gl = document.getElementById('grp-list');
+      const cc = document.getElementById('cluster-checks');
+      CLUSTERS.forEach(c => {
+        gl.innerHTML += `<div class="grp-item">
+      <label>${c.label}</label>
+      <input id="gid_${c.id}" placeholder="120363...@g.us" oninput="saveConfig()"/>
+    </div>`;
+        cc.innerHTML += `<label>
+      <input type="checkbox" id="chk_${c.id}" value="${c.id}"/>
+      <span>${c.label}</span>
+    </label>`;
+      });
+      loadConfig();
+    }
+
+    function showPanel(id) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      const tabs = ['panel-report', 'panel-dispatch', 'panel-mark', 'panel-search', 'panel-activity', 'panel-config'];
+      const idx = tabs.indexOf(id);
+      if (idx >= 0) document.querySelectorAll('.tab')[idx].classList.add('active');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  TOAST NOTIFICATIONS (NEW)
+    // ═══════════════════════════════════════════════════════════
+    function showToast(msg, type = 'info') {
+      const wrap = document.getElementById('toast-wrap');
+      const div = document.createElement('div');
+      div.className = 'toast ' + type;
+      div.textContent = msg;
+      wrap.appendChild(div);
+      requestAnimationFrame(() => { requestAnimationFrame(() => div.classList.add('show')); });
+      setTimeout(() => {
+        div.classList.remove('show');
+        setTimeout(() => div.remove(), 400);
+      }, 3500);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  ACTIVITY LOG (NEW)
+    // ═══════════════════════════════════════════════════════════
+    function logActivity(msg, type = 'info') {
+      const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      activityLog.unshift({ msg, type, ts });
+      if (activityLog.length > 100) activityLog.pop();
+      renderActivityLog();
+    }
+
+    function renderActivityLog() {
+      const feed = document.getElementById('activity-feed');
+      if (!activityLog.length) {
+        feed.innerHTML = '<p style="font-size:12px;color:var(--text3);padding:8px 0">No activity yet this session.</p>';
+        return;
+      }
+      const icons = { ok: '✅', err: '❌', info: 'ℹ️', working: '⏳' };
+      feed.innerHTML = activityLog.map(a => `
+    <div class="feed-item">
+      <span>${icons[a.type] || '•'}</span>
+      <span class="fi-msg">${a.msg}</span>
+      <span class="fi-ts">${a.ts}</span>
+    </div>`).join('');
+    }
+
+    function clearActivityLog() {
+      activityLog = [];
+      renderActivityLog();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CONFIRM MODAL (NEW)
+    // ═══════════════════════════════════════════════════════════
+    function showModal(title, body, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').textContent = body;
+      document.getElementById('modal-ok').onclick = () => { closeModal(); onConfirm(); };
+      document.getElementById('confirm-modal').classList.add('show');
+    }
+    function closeModal() {
+      document.getElementById('confirm-modal').classList.remove('show');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  REPORT RENDERING
+    // ═══════════════════════════════════════════════════════════
+    function renderReport(rows, targetId) {
+      const now = new Date();
+      const ts = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      let totals = { fa: 0, fc: 0, fp: 0, pa: 0, pc: 0, pp: 0 };
+      let tbody = '';
+      rows.forEach(r => {
+        Object.keys(totals).forEach(k => totals[k] += (r[k] || 0));
+        tbody += `<tr>
+      <td class="td-cl">${r.cl || ''}</td>
+      <td class="td-eng">${r.eng}</td>
+      <td>${r.fa || '<span class="zero">—</span>'}</td>
+      <td>${r.fc || '<span class="zero">—</span>'}</td>
+      <td>${(r.fp || 0) > 0 ? `<span class="pend-r">${r.fp}</span>` : '<span class="zero">—</span>'}</td>
+      <td>${r.pa || '<span class="zero">—</span>'}</td>
+      <td>${r.pc || '<span class="zero">—</span>'}</td>
+      <td>${(r.pp || 0) > 0 ? `<span class="pend-b">${r.pp}</span>` : '<span class="zero">—</span>'}</td>
+    </tr>`;
+      });
+      document.getElementById(targetId).innerHTML = `
+    <div class="rc-head">
+      <span class="rc-head-title">🏢 SHIVAM TELECOM — Task Assignment Report</span>
+      <span class="rc-head-ts">${ts}</span>
+    </div>
+    <div class="rc-sub">
+      <span>Engineers: ${rows.length}</span>
+      <span>🔴 Fault Pending: ${totals.fp}</span>
+      <span>🔵 NTC/DISS Pending: ${totals.pp}</span>
+      <span>Generated: ${ts}</span>
+    </div>
+    <table class="rt">
+      <thead>
+        <tr>
+          <th style="text-align:left;width:95px">Cluster</th>
+          <th style="text-align:left;width:200px">Assign To (Engineer)</th>
+          <th colspan="3" style="background:rgba(180,30,30,.1)">🔴 FAULT</th>
+          <th colspan="3" style="background:rgba(30,64,128,.1)">🔵 NTC / DISS</th>
+        </tr>
+        <tr>
+          <th style="text-align:left"></th><th style="text-align:left"></th>
+          <th>Assigned</th><th>Cleared</th><th>Pending</th>
+          <th>Assigned</th><th>Cleared</th><th>Pending</th>
+        </tr>
+      </thead>
+      <tbody>${tbody}</tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="text-align:left">TOTAL</td>
+          <td>${totals.fa}</td><td>${totals.fc}</td>
+          <td><span class="pend-r">${totals.fp}</span></td>
+          <td>${totals.pa}</td><td>${totals.pc}</td>
+          <td><span class="pend-b">${totals.pp}</span></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="rc-footer">SHIVAM TELECOM • Field Operations Report • ${ts} • Auto-generated by Dashboard v4</div>`;
+    }
+
+    function renderOverdueReport(targetId) {
+      const now = new Date();
+      const ts = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const overdue = ROWS.filter(r => (r.fp || 0) > 0 || (r.pp || 0) > 0);
+      let tbody = '';
+      overdue.forEach(r => {
+        const urgent = (r.fp || 0) > 3 || (r.pp || 0) > 3;
+        tbody += `<tr style="${urgent ? 'background:#fff8f0' : ''}">
+      <td class="td-cl" style="${urgent ? 'color:#c0392b;font-weight:700' : ''}">${urgent ? '🚨 ' : ''}${r.cl || '—'}</td>
+      <td class="td-eng" style="${urgent ? 'font-weight:700' : ''}">${r.eng}</td>
+      <td>${(r.fp || 0) > 0 ? `<span class="pend-r">${r.fp}</span>` : '<span class="zero">—</span>'}</td>
+      <td>${(r.pp || 0) > 0 ? `<span class="pend-b">${r.pp}</span>` : '<span class="zero">—</span>'}</td>
+    </tr>`;
+      });
+      document.getElementById(targetId).innerHTML = `
+    <div class="rc-head" style="background:#8b1a1a">
+      <span class="rc-head-title">🚨 SHIVAM TELECOM — OVERDUE / PENDING TASKS</span>
+      <span class="rc-head-ts">${ts}</span>
+    </div>
+    <div class="rc-sub" style="background:#6b1414"><span>Tasks pending — immediate attention required</span></div>
+    <table class="rt">
+      <thead><tr>
+        <th style="text-align:left">Cluster</th><th style="text-align:left">Engineer</th>
+        <th>🔴 Fault Pending</th><th>🔵 NTC/DISS Pending</th>
+      </tr></thead>
+      <tbody>${tbody.length ? tbody : '<tr><td colspan="4" style="text-align:center;padding:20px;color:#888">✅ No pending tasks!</td></tr>'}</tbody>
+    </table>
+    <div class="rc-footer" style="background:#8b1a1a">SHIVAM TELECOM • Overdue Report • ${ts}</div>`;
+    }
+
+    function renderEngWorkload(targetId) {
+      const now = new Date();
+      const ts = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const engMap = {};
+      ROWS.forEach(r => {
+        r.eng.split('/').map(e => e.trim()).forEach(eng => {
+          if (!engMap[eng]) engMap[eng] = { fault: 0, ntcd: 0, cl: r.cl || '—' };
+          engMap[eng].fault += (r.fp || 0);
+          engMap[eng].ntcd += (r.pp || 0);
+        });
+      });
+      const sorted = Object.entries(engMap).sort((a, b) => (b[1].fault + b[1].ntcd) - (a[1].fault + a[1].ntcd));
+      let tbody = '', totalF = 0, totalP = 0;
+      sorted.forEach(([eng, d]) => {
+        const total = d.fault + d.ntcd;
+        const urgent = d.fault > 3 || d.ntcd > 3;
+        const icon = urgent ? '🚨' : total > 0 ? '⚠️' : '✅';
+        totalF += d.fault; totalP += d.ntcd;
+        tbody += `<tr style="${urgent ? 'background:#fff8f0' : ''}">
+      <td class="td-eng">${icon} ${eng}</td>
+      <td class="td-cl">${d.cl}</td>
+      <td>${d.fault > 0 ? `<span class="pend-r">${d.fault}</span>` : '<span class="zero">—</span>'}</td>
+      <td>${d.ntcd > 0 ? `<span class="pend-b">${d.ntcd}</span>` : '<span class="zero">—</span>'}</td>
+      <td style="font-weight:${total > 0 ? 700 : 400};color:${total > 5 ? '#c0392b' : total > 0 ? '#0f1e3d' : '#8895b3'}">${total || '—'}</td>
+    </tr>`;
+      });
+      document.getElementById(targetId).innerHTML = `
+    <div class="rc-head" style="background:#3b0764">
+      <span class="rc-head-title">👷 SHIVAM TELECOM — ENGINEER WORKLOAD REPORT</span>
+      <span class="rc-head-ts">${ts}</span>
+    </div>
+    <div class="rc-sub" style="background:#4c1d95">
+      <span>Engineers: ${sorted.length}</span>
+      <span>🔴 Total Fault Pending: ${totalF}</span>
+      <span>🔵 Total NTC/DISS Pending: ${totalP}</span>
+    </div>
+    <table class="rt">
+      <thead><tr>
+        <th style="text-align:left">Engineer</th><th style="text-align:left;width:100px">Cluster</th>
+        <th>🔴 Fault</th><th>🔵 NTC/DISS</th><th>Total</th>
+      </tr></thead>
+      <tbody>${tbody}</tbody>
+      <tfoot><tr>
+        <td style="text-align:left" colspan="2">TOTAL</td>
+        <td><span class="pend-r">${totalF}</span></td>
+        <td><span class="pend-b">${totalP}</span></td>
+        <td style="font-weight:700">${totalF + totalP}</td>
+      </tr></tfoot>
+    </table>
+    <div class="rc-footer" style="background:#3b0764">SHIVAM TELECOM • Engineer Workload • ${ts} • 🚨 Critical | ⚠️ Active | ✅ Clear</div>`;
+    }
+
+    function updateStats(rows) {
+      let fp = 0, pp = 0, fc = 0, engs = 0, over = 0;
+      rows.forEach(r => {
+        fp += (r.fp || 0); pp += (r.pp || 0); fc += (r.fc || 0);
+        if (r.eng) engs++;
+      });
+      // Count overdue from raw rows if available
+      FAULT_ROWS.forEach(r => { if (parseFloat(r[5] || 0) > 3 && String(r[10] || '').toLowerCase() === 'pending') over++; });
+      PD_ROWS.forEach(r => { if (parseFloat(r[3] || 0) > 3 && String(r[9] || '').toLowerCase() === 'pending') over++; });
+      document.getElementById('st-fp').textContent = fp;
+      document.getElementById('st-pp').textContent = pp;
+      document.getElementById('st-fc').textContent = fc;
+      document.getElementById('st-eng').textContent = engs;
+      document.getElementById('st-over').textContent = over || '—';
+      document.getElementById('nav-pending').textContent = (fp + pp) + ' pending';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  STATUS HELPERS
+    // ═══════════════════════════════════════════════════════════
+    function setStatus(prefix, msg, type = 'idle') {
+      const s = document.getElementById(prefix + '-status');
+      const d = document.getElementById(prefix + '-dot');
+      const t = document.getElementById(prefix + '-status-text');
+      if (s) s.className = 'status ' + type;
+      if (d) d.className = 'dot ' + type;
+      if (t) t.textContent = msg;
+    }
+    function setProgress(prefix, pct) {
+      const w = document.getElementById(prefix + '-prog-wrap');
+      const b = document.getElementById(prefix + '-prog-bar');
+      if (!w || !b) return;
+      if (pct >= 100) { w.style.display = 'none'; b.style.width = '0%'; return; }
+      w.style.display = 'block'; b.style.width = pct + '%';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CAPTURE & SEND
+    // ═══════════════════════════════════════════════════════════
+    async function captureElement(id) {
+      const el = document.getElementById(id);
+      return await html2canvas(el, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, width: el.scrollWidth, height: el.scrollHeight });
+    }
+
+    async function captureReport() {
+      setStatus('rep', 'Capturing main report image...', 'working');
+      setProgress('rep', 30);
+      logActivity('Capturing main report image...', 'working');
+      try {
+        renderReport(ROWS, 'report-canvas');
+        await new Promise(r => setTimeout(r, 200));
+        const canvas = await captureElement('report-canvas');
+        canvas.toBlob(blob => {
+          capturedBlob = blob;
+          setProgress('rep', 100);
+          setStatus('rep', '✅ Image captured! Ready to send.', 'ok');
+          document.getElementById('btnSendAll').disabled = false;
+          document.getElementById('btnSendSel').disabled = false;
+          addPreview(blob, 'Main Report');
+          logActivity('Main report image captured ✅', 'ok');
+          showToast('Report captured! Ready to send.', 'ok');
+        }, 'image/png');
+      } catch (e) {
+        setProgress('rep', 100);
+        setStatus('rep', 'Capture failed: ' + e.message, 'err');
+        logActivity('Capture failed: ' + e.message, 'err');
+      }
+    }
+
+    async function captureOverdue() {
+      setStatus('rep', 'Capturing overdue report...', 'working');
+      setProgress('rep', 30);
+      try {
+        renderOverdueReport('report-canvas');
+        await new Promise(r => setTimeout(r, 200));
+        const canvas = await captureElement('report-canvas');
+        canvas.toBlob(blob => {
+          capturedBlob = blob;
+          setProgress('rep', 100);
+          setStatus('rep', '✅ Overdue report captured!', 'ok');
+          document.getElementById('btnSendAll').disabled = false;
+          document.getElementById('btnSendSel').disabled = false;
+          addPreview(blob, 'Overdue');
+          showToast('Overdue report captured!', 'ok');
+        }, 'image/png');
+      } catch (e) { setProgress('rep', 100); setStatus('rep', 'Capture failed: ' + e.message, 'err'); }
+    }
+
+    async function captureEngWorkload() {
+      setStatus('rep', 'Capturing engineer workload report...', 'working');
+      setProgress('rep', 30);
+      try {
+        renderEngWorkload('report-canvas');
+        await new Promise(r => setTimeout(r, 200));
+        const canvas = await captureElement('report-canvas');
+        canvas.toBlob(blob => {
+          capturedBlob = blob;
+          setProgress('rep', 100);
+          setStatus('rep', '✅ Eng Workload report captured!', 'ok');
+          document.getElementById('btnSendAll').disabled = false;
+          document.getElementById('btnSendSel').disabled = false;
+          addPreview(blob, 'Eng Workload');
+          showToast('Eng Workload captured!', 'ok');
+        }, 'image/png');
+      } catch (e) { setProgress('rep', 100); setStatus('rep', 'Capture failed: ' + e.message, 'err'); }
+    }
+
+    function addPreview(blob, lbl) {
+      const strip = document.getElementById('preview-strip');
+      strip.style.display = 'flex';
+      const url = URL.createObjectURL(blob);
+      const id = 'prev_' + Date.now();
+      const el = document.createElement('div');
+      el.className = 'prev-thumb'; el.id = id;
+      el.innerHTML = `<img src="${url}" title="${lbl}"/>
+    <button class="del" onclick="document.getElementById('${id}').remove()">✕</button>
+    <div class="plbl">${lbl}</div>`;
+      el.querySelector('img')._blob = blob;
+      el.querySelector('img').onclick = () => { capturedBlob = blob; setStatus('rep', 'Image selected: ' + lbl, 'ok'); };
+      strip.appendChild(el);
+    }
+
+    async function uploadMedia(blob, token, pid) {
+      const fd = new FormData();
+      fd.append('file', blob, 'shivam_report.png');
+      fd.append('type', 'image/png');
+      fd.append('messaging_product', 'whatsapp');
+      const res = await fetch(`https://graph.facebook.com/v19.0/${pid}/media`, { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd });
+      const json = await res.json();
+      if (!json.id) throw new Error(json.error?.message || 'Upload failed — check token');
+      return json.id;
+    }
+
+    async function sendImage(to, mediaId, caption, token, pid) {
+      const res = await fetch(`https://graph.facebook.com/v19.0/${pid}/messages`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'image', image: { id: mediaId, caption } })
+      });
+      const json = await res.json();
+      return { ok: !!json.messages?.[0]?.id, id: json.messages?.[0]?.id, err: json.error?.message };
+    }
+
+    async function doSend(targets) {
+      const token = document.getElementById('cfg-token').value.trim();
+      const pid = document.getElementById('cfg-pid').value.trim();
+      if (!token) { setStatus('rep', 'Enter your WhatsApp Access Token in Config tab.', 'err'); showToast('No access token set', 'err'); return; }
+      if (!capturedBlob) { setStatus('rep', 'Capture an image first.', 'err'); showToast('Capture a report image first', 'err'); return; }
+      if (!targets.length) { setStatus('rep', 'No valid group IDs. Add them in Config tab.', 'err'); showToast('No group IDs configured', 'err'); return; }
+      const now = new Date();
+      const ts = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const caption = `📊 *SHIVAM TELECOM* — Task Report\n📅 ${ts}\n_Sent by Field Ops Dashboard v4_`;
+      setStatus('rep', 'Uploading image to WhatsApp...', 'working');
+      setProgress('rep', 10);
+      logActivity(`Uploading report image to WhatsApp (${targets.length} groups)...`, 'working');
+      let mediaId;
+      try { mediaId = await uploadMedia(capturedBlob, token, pid); }
+      catch (e) { setStatus('rep', 'Upload failed: ' + e.message, 'err'); setProgress('rep', 100); logActivity('Upload failed: ' + e.message, 'err'); return; }
+      setStatus('rep', `Sending to ${targets.length} group(s)...`, 'working');
+      let sent = 0, failed = 0;
+      const results = [];
+      for (let i = 0; i < targets.length; i++) {
+        setProgress('rep', 10 + Math.round(((i + 1) / targets.length) * 85));
+        const r = await sendImage(targets[i].gid, mediaId, caption, token, pid);
+        if (r.ok) { sent++; results.push({ lbl: targets[i].label, ok: true }); }
+        else { failed++; results.push({ lbl: targets[i].label, ok: false, err: r.err }); }
+        await new Promise(r => setTimeout(r, 400));
+      }
+      setProgress('rep', 100);
+      const msg = `✅ Sent to ${sent}/${targets.length} group(s)` + (failed > 0 ? ` | ⚠️ ${failed} failed` : '');
+      setStatus('rep', msg, sent > 0 ? 'ok' : 'err');
+      logActivity(msg, sent > 0 ? 'ok' : 'err');
+      showToast(msg, sent > 0 ? 'ok' : 'err');
+      const ra = document.getElementById('send-result-area');
+      ra.innerHTML = '<div class="send-result">' + results.map(r =>
+        `<div class="sr-row"><span class="sr-label">${r.lbl}</span><span class="sr-status ${r.ok ? 'sr-ok' : 'sr-fail'}">${r.ok ? '✅ Sent' : '❌ ' + r.err}</span></div>`
+      ).join('') + '</div>';
+    }
+
+    function getTargets() {
+      return CLUSTERS.map(c => ({ label: c.label, gid: (document.getElementById('gid_' + c.id) || {}).value || '' }))
+        .filter(t => t.gid && (t.gid.includes('@') || t.gid.length > 8) && !t.gid.includes('...'));
+    }
+
+    async function sendToAll() { await doSend(getTargets()); }
+
+    function toggleClusterPicker() {
+      const p = document.getElementById('cluster-picker');
+      p.style.display = p.style.display === 'none' || !p.style.display ? 'block' : 'none';
+    }
+
+    async function doSendSelected() {
+      const targets = CLUSTERS.filter(c => document.getElementById('chk_' + c.id)?.checked)
+        .map(c => ({ label: c.label, gid: (document.getElementById('gid_' + c.id) || {}).value || '' }))
+        .filter(t => t.gid && !t.gid.includes('...'));
+      if (!targets.length) { setStatus('rep', 'Select at least one group.', 'err'); return; }
+      document.getElementById('cluster-picker').style.display = 'none';
+      await doSend(targets);
+    }
+
+    async function captureAndSendAll() {
+      const targets = getTargets();
+      if (!targets.length) { showToast('No group IDs in Config tab.', 'err'); return; }
+      setStatus('rep', 'Capturing report...', 'working');
+      setProgress('rep', 10);
+      renderReport(ROWS, 'report-canvas');
+      await new Promise(r => setTimeout(r, 200));
+      try {
+        const canvas = await captureElement('report-canvas');
+        await new Promise(resolve => {
+          canvas.toBlob(async blob => {
+            capturedBlob = blob;
+            addPreview(blob, 'Auto');
+            await sendToAll();
+            resolve();
+          }, 'image/png');
+        });
+      } catch (e) { setStatus('rep', 'Error: ' + e.message, 'err'); setProgress('rep', 100); }
+    }
+
+    function downloadImg() {
+      if (!capturedBlob) { captureReport(); return; }
+      const url = URL.createObjectURL(capturedBlob);
+      const a = Object.assign(document.createElement('a'), { href: url, download: 'shivam_report_' + Date.now() + '.png', style: 'display:none' });
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 2000);
+      setStatus('rep', 'Image downloaded.', 'ok');
+      showToast('Image downloaded ✅', 'ok');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  TEST CONNECTION (NEW)
+    // ═══════════════════════════════════════════════════════════
+    async function testConnection() {
+      const url = document.getElementById('cfg-url').value.trim();
+      if (!url) { showToast('No Apps Script URL set', 'err'); return; }
+      setStatus('rep', 'Testing connection...', 'working');
+      logActivity('Testing Apps Script connection...', 'working');
+      try {
+        const res = await fetch(url + '?action=getReportData');
+        const json = await res.json();
+        if (json.rows) {
+          setStatus('rep', '✅ Connection OK — ' + json.rows.length + ' rows found.', 'ok');
+          showToast('Connection successful ✅', 'ok');
+          logActivity('Connection OK — ' + json.rows.length + ' rows', 'ok');
+        } else if (json.error) {
+          setStatus('rep', '❌ Script error: ' + json.error, 'err');
+          showToast('Script error: ' + json.error, 'err');
+        }
+      } catch (e) {
+        setStatus('rep', '❌ Connection failed: ' + e.message, 'err');
+        showToast('Connection failed: ' + e.message, 'err');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  LOAD FROM SHEET
+    // ═══════════════════════════════════════════════════════════
+    async function loadFromSheet() {
+      const url = document.getElementById('cfg-url').value.trim();
+      if (!url) { setStatus('rep', 'No Apps Script URL set. Add it in the Config tab.', 'err'); showToast('Set Apps Script URL in Config', 'err'); return; }
+      setStatus('rep', 'Fetching live data from Google Sheets...', 'working');
+      setProgress('rep', 20);
+      logActivity('Loading live data from Google Sheets...', 'working');
+      try {
+        const res = await fetch(url + '?action=getReportData');
+        const json = await res.json();
+        if (json.rows) {
+          ROWS = json.rows;
+          if (json.fault_rows) FAULT_ROWS = json.fault_rows;
+          if (json.pd_rows) PD_ROWS = json.pd_rows;
+          renderReport(ROWS, 'report-preview');
+          renderReport(ROWS, 'report-canvas');
+          updateStats(ROWS);
+          renderSummary();
+          setProgress('rep', 100);
+          const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+          setStatus('rep', `✅ Loaded ${ROWS.length} rows from sheet at ${ts}.`, 'ok');
+          document.getElementById('last-loaded').textContent = 'Last loaded: ' + ts;
+          document.getElementById('mark-no-data').style.display = 'none';
+          logActivity(`Loaded ${ROWS.length} rows, ${json.total_fault_pending || 0} fault pending, ${json.total_pd_pending || 0} NTC/DISS pending`, 'ok');
+          showToast(`Loaded ${ROWS.length} engineer rows ✅`, 'ok');
+          // Auto-refresh task list if dispatch tab was showing
+          loadTaskList();
+        } else throw new Error(json.error || 'Invalid response');
+      } catch (e) {
+        setProgress('rep', 100);
+        setStatus('rep', 'Error: ' + e.message, 'err');
+        logActivity('Load failed: ' + e.message, 'err');
+        showToast('Load failed: ' + e.message, 'err');
+      }
+    }
+
+    function loadFromJSON() {
+      try {
+        const v = document.getElementById('cfg-json').value.trim();
+        ROWS = JSON.parse(v);
+        renderReport(ROWS, 'report-preview');
+        renderReport(ROWS, 'report-canvas');
+        updateStats(ROWS);
+        setStatus('rep', '✅ Data loaded from JSON.', 'ok');
+        showToast('Data loaded from JSON ✅', 'ok');
+      } catch (e) { setStatus('rep', 'Invalid JSON: ' + e.message, 'err'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  SUMMARY PANEL
+    // ═══════════════════════════════════════════════════════════
+    function renderSummary() {
+      const area = document.getElementById('summary-area');
+      if (!FAULT_ROWS.length && !PD_ROWS.length) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--text3)">Load live data to see summary.</p>';
+        return;
+      }
+      const fPend = FAULT_ROWS.filter(r => String(r[10] || '').toLowerCase() === 'pending').length;
+      const fClr = FAULT_ROWS.filter(r => String(r[10] || '').toLowerCase() === 'clear').length;
+      const nPend = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === 'NTC' && String(r[9] || '').toLowerCase() === 'pending').length;
+      const nClr = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === 'NTC' && String(r[9] || '').toLowerCase() === 'clear').length;
+      const dPend = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === 'DISS' && String(r[9] || '').toLowerCase() === 'pending').length;
+      const dClr = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === 'DISS' && String(r[9] || '').toLowerCase() === 'clear').length;
+      const total = fPend + nPend + dPend;
+      const totalClr = fClr + nClr + dClr;
+      const pct = total + totalClr > 0 ? Math.round(totalClr / (total + totalClr) * 100) : 0;
+
+      area.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px">
+      <div style="text-align:center;padding:12px;background:var(--red2);border-radius:var(--rad);border:1px solid #fca5a5">
+        <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--red)">${fPend}</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px">🔴 Fault Pending</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#fef3c7;border-radius:var(--rad);border:1px solid #fcd34d">
+        <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--amber)">${nPend}</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px">🟡 NTC Pending</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--blue3);border-radius:var(--rad);border:1px solid #b5d4f4">
+        <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--blue)">${dPend}</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px">🔵 DISS Pending</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--green2);border-radius:var(--rad);border:1px solid #86efac">
+        <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--green)">${totalClr}</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px">✅ Total Cleared</div>
+      </div>
+    </div>
+    <div style="background:var(--gray);border-radius:var(--rad);padding:10px 14px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:11px;font-weight:600">Overall Completion:</div>
+      <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:var(--green);border-radius:4px;transition:width .5s"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;font-family:var(--mono);color:var(--green)">${pct}%</div>
+    </div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  DISPATCH TAB
+    // ═══════════════════════════════════════════════════════════
+    function loadAndPreviewAll() {
+      const area = document.getElementById('eng-preview-area');
+      if (!FAULT_ROWS.length && !PD_ROWS.length && ROWS.every(r => !r.fp && !r.pp)) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--amber);padding:8px 0">⚠️ No data loaded. Go to Report &amp; Send → Load Live Data first.</p>';
+        return;
+      }
+      area.innerHTML = '<p style="font-size:12px;color:var(--text2)">Building engineer messages from loaded data...</p>';
+      const byEng = {};
+      ROWS.forEach(r => {
+        const engs = r.eng.split('/').map(e => e.trim());
+        engs.forEach(eng => {
+          if (!byEng[eng]) byEng[eng] = { fault: 0, ntcd: 0, cl: r.cl || '—' };
+          byEng[eng].fault += (r.fp || 0);
+          byEng[eng].ntcd += (r.pp || 0);
+        });
+      });
+      const withTasks = Object.entries(byEng).filter(([, d]) => d.fault + d.ntcd > 0);
+      if (!withTasks.length) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--green);padding:8px 0">🎉 No pending tasks for any engineer!</p>';
+        return;
+      }
+      let html = `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">${withTasks.length} engineer(s) with pending tasks</div><div style="display:grid;gap:8px">`;
+      withTasks.forEach(([eng, d]) => {
+        const total = d.fault + d.ntcd;
+        const urgent = d.fault > 3 || d.ntcd > 3;
+        html += `<div style="background:${urgent ? '#fff8f0' : ' var(--gray)'};border-radius:var(--rad);padding:10px 12px;border:1px solid ${urgent ? '#fca5a5' : 'var(--border)'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-weight:700;font-size:12px">${urgent ? '🚨' : ''} 👷 ${eng}</span>
+        <span class="badge badge-gray">${d.cl}</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${d.fault > 0 ? `<span class="badge badge-red">🔴 ${d.fault} Fault</span>` : ''}
+        ${d.ntcd > 0 ? `<span class="badge badge-blue">🔵 ${d.ntcd} NTC/DISS</span>` : ''}
+        <span class="badge badge-amber">Total: ${total}</span>
+      </div>
+    </div>`;
+      });
+      html += '</div>';
+      area.innerHTML = html;
+      setStatus('dis', `✅ Preview: ${withTasks.length} engineer(s) with tasks. Click "Dispatch All" to send via WhatsApp.`, 'ok');
+      logActivity(`Previewed ${withTasks.length} engineer messages`, 'info');
+    }
+
+    // FIX: dispatchAll now has proper confirmation + GAS endpoint call
+    function confirmDispatchAll() {
+      if (!FAULT_ROWS.length && !PD_ROWS.length) {
+        showToast('Load live data first (Report & Send tab)', 'err');
+        return;
+      }
+      const count = ROWS.filter(r => (r.fp || 0) + (r.pp || 0) > 0).length;
+      showModal(
+        'Dispatch All Engineer Messages',
+        `This will send task messages to ${count} engineer group(s) via the WhatsApp bot. This calls your Apps Script to trigger dispatch. Are you sure?`,
+        () => doDispatchAll()
+      );
+    }
+
+    async function doDispatchAll() {
+      const url = document.getElementById('cfg-url').value.trim();
+      // Option A: If Apps Script URL is configured — call it to trigger bot dispatch
+      if (url) {
+        setStatus('dis', 'Triggering dispatch via Apps Script...', 'working');
+        logActivity('Dispatching all engineer messages via Apps Script...', 'working');
+        try {
+          // This calls a custom action that triggers the bot to send WhatsApp messages
+          const res = await fetch(url + '?action=dispatchAll');
+          const json = await res.json();
+          if (json.success || json.sent !== undefined) {
+            const msg = `✅ Dispatched to ${json.sent || '?'} engineer(s)`;
+            setStatus('dis', msg, 'ok');
+            showToast(msg, 'ok');
+            logActivity(msg, 'ok');
+          } else {
+            // If action not implemented, fall back to info message
+            setStatus('dis', '⚠️ Apps Script does not implement "dispatchAll" action. Send "1" or "allfault" to the WhatsApp bot instead.', 'working');
+            showToast('Send "allfault" to the WhatsApp bot to dispatch', 'info');
+            logActivity('dispatchAll action not implemented in Apps Script — use WhatsApp bot', 'info');
+          }
+        } catch (e) {
+          setStatus('dis', '❌ Error: ' + e.message + '. Use WhatsApp bot: send "allfault"', 'err');
+        }
+      } else {
+        // Option B: No URL — direct WhatsApp API (send text to each configured group)
+        const token = document.getElementById('cfg-token').value.trim();
+        const pid = document.getElementById('cfg-pid').value.trim();
+        if (!token || !pid) {
+          setStatus('dis', 'No Apps Script URL or WhatsApp token configured. Add them in Config tab.', 'err');
+          showToast('Configure API credentials in Config tab', 'err');
+          return;
+        }
+        // Build and send messages from ROWS data
+        const ts = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        const byEng = {};
+        ROWS.forEach(r => { r.eng.split('/').map(e => e.trim()).forEach(eng => { if (!byEng[eng]) byEng[eng] = { fault: r.fp || 0, ntcd: r.pp || 0, cl: r.cl || '—' }; }); });
+        let sent = 0, skip = 0;
+        setStatus('dis', 'Sending direct WhatsApp messages...', 'working');
+        for (const [eng, d] of Object.entries(byEng)) {
+          const total = d.fault + d.ntcd;
+          if (!total) continue;
+          // Look for an engineer-specific group or cluster group
+          const engKey = 'gid_' + eng.toLowerCase().replace(/[\s/]/g, '');
+          const clKey = 'gid_' + (d.cl || '').toLowerCase();
+          const gid = (document.getElementById(engKey) || document.getElementById(clKey) || {}).value || '';
+          if (!gid || gid.includes('...')) { skip++; continue; }
+          const msg = `📋 *TASK ASSIGNMENT*\n━━━━━━━━━━━━━━━━━━━━━━━━\n👷 @${eng}\n📅 ${ts}\n━━━━━━━━━━━━━━━━━━━━━━━━\n${d.fault ? `\n🔴 *Fault:* ${d.fault} task(s)` : ''}${d.ntcd ? `\n🔵 *NTC/DISS:* ${d.ntcd} task(s)` : ''}\n━━━━━━━━━━━━━━━━━━━━━━━━\n📊 Total: *${total}*\n✔️ _SHIVAM TELECOM Field Bot_`;
+          try {
+            await fetch(`https://graph.facebook.com/v19.0/${pid}/messages`, {
+              method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ messaging_product: 'whatsapp', to: gid, type: 'text', text: { body: msg, preview_url: false } })
+            });
+            sent++;
+            await new Promise(r => setTimeout(r, 350));
+          } catch (_) { skip++; }
+        }
+        const msg = `✅ Sent to ${sent} engineer group(s)${skip ? ' | ⚠️ ' + skip + ' skipped (no group ID)' : ''}`;
+        setStatus('dis', msg, sent > 0 ? 'ok' : 'err');
+        showToast(msg, sent > 0 ? 'ok' : 'err');
+        logActivity(msg, sent > 0 ? 'ok' : 'err');
+      }
+    }
+
+    function loadTaskList() {
+      const type = document.getElementById('dis-type').value;
+      const cluster = document.getElementById('dis-cluster').value;
+      const area = document.getElementById('task-list-area');
+      if (!FAULT_ROWS.length && !PD_ROWS.length) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--text3);padding:8px 0">Load live data first (Report &amp; Send → Load Live Data).</p>';
+        return;
+      }
+      let rows = [];
+      if (type === 'FAULT') {
+        rows = FAULT_ROWS.filter(r => String(r[10] || '').toLowerCase() === 'pending');
+        if (cluster !== 'ALL') rows = rows.filter(r => String(r[9] || '').toUpperCase() === cluster);
+      } else {
+        rows = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === type && String(r[9] || '').toLowerCase() === 'pending');
+        if (cluster !== 'ALL') rows = rows.filter(r => String(r[8] || '').toUpperCase() === cluster);
+      }
+      if (!rows.length) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--text3);padding:8px 0">No pending ' + type + ' tasks' + (cluster !== 'ALL' ? ' for ' + cluster : '') + '.</p>';
+        return;
+      }
+      const typeIcon = type === 'FAULT' ? '🔴' : type === 'NTC' ? '🟡' : '🔵';
+      let html = `<div style="font-size:11px;color:var(--text3);margin:8px 0">${rows.length} pending ${type} task(s)</div>
+    <div style="overflow-x:auto"><table class="task-table">
+    <thead><tr><th>#</th><th>Phone</th><th>Customer</th><th>Engineer</th><th>Cluster</th><th>Duration</th><th>Action</th></tr></thead>
+    <tbody>`;
+      rows.forEach((row, i) => {
+        const ph = type === 'FAULT' ? row[1] : row[2];
+        const cust = type === 'FAULT' ? row[2] : row[4];
+        const eng = type === 'FAULT' ? row[8] : row[7];
+        const clst = type === 'FAULT' ? row[9] : row[8];
+        const dur = type === 'FAULT' ? row[5] : row[3];
+        html += `<tr>
+      <td style="color:var(--text3)">${i + 1}</td>
+      <td style="font-family:var(--mono);font-size:11px">${ph || '—'}</td>
+      <td>${cust || '—'}</td>
+      <td><span class="badge badge-gray">${eng || '—'}</span></td>
+      <td><span class="badge badge-blue">${clst || '—'}</span></td>
+      <td>${dur > 0 ? `<span class="badge ${dur > 3 ? 'badge-red' : 'badge-amber'}">${dur}d</span>` : '—'}</td>
+      <td><button class="btn sm blue" onclick="sendSingleTask('${type}',${i})">Send ${typeIcon}</button></td>
+    </tr>`;
+      });
+      html += '</tbody></table></div>';
+      area.innerHTML = html;
+      area._rows = rows; area._type = type;
+    }
+
+    async function sendSingleTask(type, idx) {
+      const area = document.getElementById('task-list-area');
+      if (!area._rows) return;
+      const row = area._rows[idx];
+      const token = document.getElementById('cfg-token').value.trim();
+      const pid = document.getElementById('cfg-pid').value.trim();
+      if (!token) { setStatus('dis', 'Enter WhatsApp Access Token in Config.', 'err'); return; }
+      const clst = type === 'FAULT' ? String(row[9] || '') : String(row[8] || '');
+      const gidEl = document.getElementById('gid_' + clst.toLowerCase());
+      const gid = gidEl?.value?.trim() || '';
+      if (!gid || gid.includes('...')) { setStatus('dis', 'No group ID for cluster ' + clst + '. Add it in Config.', 'err'); showToast('No group ID for ' + clst, 'err'); return; }
+      const ph = type === 'FAULT' ? row[1] : row[2];
+      const cust = type === 'FAULT' ? row[2] : row[4];
+      const eng = type === 'FAULT' ? row[8] : row[7];
+      const ts = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const icon = type === 'FAULT' ? '🔴 FAULT' : type === 'NTC' ? '🟡 NTC' : '🔵 DISS';
+      const msg = `${icon}\n━━━━━━━━━━━━━━━━━━━━━━━━\n📅 ${ts}\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n👷 *${eng || '—'}*\n📞 ${ph || '—'}\n👤 ${cust || '—'}\n📍 Cluster: ${clst}\n\n✔️ _SHIVAM TELECOM Field Bot_`;
+      setStatus('dis', 'Sending to ' + clst + ' group...', 'working');
+      try {
+        const res = await fetch(`https://graph.facebook.com/v19.0/${pid}/messages`, {
+          method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messaging_product: 'whatsapp', to: gid, type: 'text', text: { body: msg, preview_url: false } })
+        });
+        const json = await res.json();
+        if (json.messages?.[0]?.id) {
+          setStatus('dis', '✅ Task sent to ' + clst + ' group!', 'ok');
+          showToast('Task sent to ' + clst + ' ✅', 'ok');
+          logActivity('Sent ' + type + ' task (' + ph + ') to ' + clst + ' group', 'ok');
+        } else {
+          setStatus('dis', 'Failed: ' + (json.error?.message || 'Unknown error'), 'err');
+        }
+      } catch (e) { setStatus('dis', 'Error: ' + e.message, 'err'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  MARK CLEAR TAB — BUG FIXED
+    // ═══════════════════════════════════════════════════════════
+    function markSearch() {
+      const phone = document.getElementById('mark-phone').value.trim();
+      const type = document.getElementById('mark-type').value;
+      if (!phone) { setStatus('mark', 'Enter a phone number.', 'err'); return; }
+
+      let rows, phoneCol, custCol, engCol, clstCol, statCol;
+      // FIX: Correct column mapping
+      if (type === 'FAULT') {
+        rows = FAULT_ROWS;
+        phoneCol = 1; custCol = 2; engCol = 8; clstCol = 9; statCol = 10;
+      } else {
+        // PD rows: filter by type (col 0)
+        rows = PD_ROWS.filter(r => String(r[0] || '').toUpperCase() === type);
+        phoneCol = 2; custCol = 4; engCol = 7; clstCol = 8; statCol = 9;
+      }
+
+      if (!rows.length) {
+        setStatus('mark', 'No ' + type + ' data loaded. Load live data first.', 'err');
+        document.getElementById('mark-result').innerHTML = `<p style="font-size:12px;color:var(--amber);padding:8px 0">⚠️ No ${type} data loaded. Go to Report &amp; Send and click Load Live Data first.</p>`;
+        return;
+      }
+
+      const found = rows.find(r => String(r[phoneCol] || '').trim() === phone.trim());
+      if (!found) {
+        setStatus('mark', 'No record found for ' + phone, 'err');
+        document.getElementById('mark-result').innerHTML = `<p style="font-size:12px;color:var(--red);padding:8px 0">No ${type} record for <strong>${phone}</strong>. Check format (e.g. 079-26860394)</p>`;
+        return;
+      }
+      const cust = found[custCol] || '—';
+      const eng = found[engCol] || '—';
+      const clst = found[clstCol] || '—';
+      const status = String(found[statCol] || '').toLowerCase();
+      const isClear = status === 'clear';
+      const statusBadge = isClear ? '<span class="badge badge-green">Clear</span>' : '<span class="badge badge-amber">Pending</span>';
+      document.getElementById('mark-result').innerHTML = `
+    <div style="background:var(--gray);border-radius:var(--rad);padding:14px;margin-top:10px;border:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px">
+        <div><div class="section-label">Phone</div><div style="font-family:var(--mono);font-size:12px;font-weight:600">${phone}</div></div>
+        <div><div class="section-label">Customer</div><div style="font-size:12px">${cust}</div></div>
+        <div><div class="section-label">Engineer</div><div style="font-size:12px">${eng}</div></div>
+        <div><div class="section-label">Cluster</div><div style="font-size:12px">${clst}</div></div>
+        <div><div class="section-label">Current Status</div><div>${statusBadge}</div></div>
+      </div>
+      ${isClear ?
+          '<p style="font-size:12px;color:var(--green)">✅ Already marked as clear.</p>' :
+          `<div style="display:flex;gap:8px;align-items:center">
+          <button class="btn green" onclick="confirmMarkClear('${type}','${phone}','${cust}','${eng}','${clst}')">✅ Mark as Clear</button>
+          <span style="font-size:11px;color:var(--text3)">Updates the sheet via Apps Script</span>
+        </div>`}
+    </div>`;
+      setStatus('mark', 'Record found: ' + phone + ' (' + cust + ')', 'ok');
+    }
+
+    async function confirmMarkClear(type, phone, cust, eng, clst) {
+      const url = document.getElementById('cfg-url').value.trim();
+      if (!url) { setStatus('mark', 'No Apps Script URL set. Cannot update sheet remotely.', 'err'); showToast('Set Apps Script URL in Config', 'err'); return; }
+      setStatus('mark', 'Updating sheet...', 'working');
+      logActivity('Marking ' + type + ' ' + phone + ' as clear...', 'working');
+      try {
+        const res = await fetch(url + '?action=markClear&type=' + type + '&phone=' + encodeURIComponent(phone));
+        const json = await res.json();
+        if (json.success) {
+          setStatus('mark', '✅ Marked as clear: ' + phone, 'ok');
+          showToast('Marked as clear: ' + phone + ' ✅', 'ok');
+          logActivity('Marked ' + type + ' ' + phone + ' (' + cust + ') as clear', 'ok');
+          document.getElementById('mark-result').innerHTML = '<p style="font-size:12px;color:var(--green);padding:8px 0">✅ Successfully marked <strong>' + phone + '</strong> as clear in the sheet.</p>';
+          clearHistory.unshift({ type, phone, cust, eng, clst, ts: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) });
+          renderClearHistory();
+          // Update local data
+          const col = type === 'FAULT' ? 10 : 9;
+          const pCol = type === 'FAULT' ? 1 : 2;
+          const arr = type === 'FAULT' ? FAULT_ROWS : PD_ROWS;
+          arr.forEach(r => { if (String(r[pCol] || '').trim() === phone.trim()) r[col] = 'clear'; });
+        } else throw new Error(json.error || 'Update failed');
+      } catch (e) { setStatus('mark', 'Error: ' + e.message, 'err'); showToast('Error: ' + e.message, 'err'); }
+    }
+
+    // FIX: renderClearHistory — fixed broken ternary syntax (was: 'h.type==="NTC"?🟡' missing quotes)
+    function renderClearHistory() {
+      const area = document.getElementById('clear-history');
+      if (!clearHistory.length) {
+        area.innerHTML = '<p style="font-size:12px;color:var(--text3);padding:8px 0">No clear actions this session.</p>';
+        return;
+      }
+      area.innerHTML = '<table class="task-table"><thead><tr><th>Time</th><th>Type</th><th>Phone</th><th>Customer</th><th>Engineer</th><th>Cluster</th></tr></thead><tbody>' +
+        clearHistory.map(h => {
+          // FIX: Properly determine icon using if/else — original had broken template literal ternary
+          let typeIcon = '🔵';
+          if (h.type === 'FAULT') typeIcon = '🔴';
+          else if (h.type === 'NTC') typeIcon = '🟡';
+          return `<tr>
+        <td style="font-family:var(--mono);font-size:10px">${h.ts}</td>
+        <td>${typeIcon} ${h.type}</td>
+        <td style="font-family:var(--mono);font-size:11px">${h.phone}</td>
+        <td>${h.cust || '—'}</td>
+        <td>${h.eng || '—'}</td>
+        <td>${h.clst || '—'}</td>
+      </tr>`;
+        }).join('') + '</tbody></table>';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  SEARCH TAB
+    // ═══════════════════════════════════════════════════════════
+    function doSearch() {
+      const q = document.getElementById('search-q').value.toLowerCase().trim();
+      const typeFilter = document.getElementById('search-type').value;
+      const statusFilter = document.getElementById('search-status').value;
+      if (!q) { document.getElementById('search-results').innerHTML = '<p style="font-size:12px;color:var(--text3)">Enter a search term.</p>'; return; }
+      if (!FAULT_ROWS.length && !PD_ROWS.length) {
+        document.getElementById('search-results').innerHTML = '<p style="font-size:12px;color:var(--amber)">⚠️ Load live data first (Report &amp; Send → Load Live Data).</p>';
+        return;
+      }
+      const results = [];
+      FAULT_ROWS.filter(r => {
+        if (typeFilter !== 'ALL' && typeFilter !== 'FAULT') return false;
+        if (statusFilter !== 'ALL' && String(r[10] || '').toLowerCase() !== statusFilter) return false;
+        return r.some(c => String(c).toLowerCase().includes(q));
+      }).forEach(r => results.push({ type: 'FAULT', row: r }));
+      PD_ROWS.filter(r => {
+        const t = String(r[0] || '').toUpperCase();
+        if (typeFilter !== 'ALL' && t !== typeFilter) return false;
+        if (statusFilter !== 'ALL' && String(r[9] || '').toLowerCase() !== statusFilter) return false;
+        return r.some(c => String(c).toLowerCase().includes(q));
+      }).forEach(r => results.push({ type: String(r[0] || '').toUpperCase(), row: r }));
+      if (!results.length) { document.getElementById('search-results').innerHTML = '<p style="font-size:12px;color:var(--text3);padding:8px 0">No results for "' + q + '"</p>'; return; }
+      const area = document.getElementById('search-results');
+      area.innerHTML = `<div style="font-size:11px;color:var(--text3);margin:8px 0">${results.length} result(s)</div>
+    <div style="overflow-x:auto"><table class="task-table">
+    <thead><tr><th>Type</th><th>Phone</th><th>Customer</th><th>Engineer</th><th>Cluster</th><th>Status</th><th>Duration</th><th>Action</th></tr></thead>
+    <tbody>`+
+        results.slice(0, 30).map(({ type, row }) => {
+          const isF = type === 'FAULT';
+          const ph = isF ? row[1] : row[2];
+          const cust = isF ? row[2] : row[4];
+          const eng = isF ? row[8] : row[7];
+          const clst = isF ? row[9] : row[8];
+          const status = isF ? row[10] : row[9];
+          const dur = isF ? row[5] : row[3];
+          // FIX: Proper icon assignment (original had same broken pattern risk)
+          let icon = '🔵';
+          if (type === 'FAULT') icon = '🔴';
+          else if (type === 'NTC') icon = '🟡';
+          const isPend = String(status).toLowerCase() === 'pending';
+          return `<tr>
+        <td><span class="badge ${isPend ? 'badge-amber' : 'badge-green'}">${icon} ${type}</span></td>
+        <td style="font-family:var(--mono);font-size:11px">${ph || '—'}</td>
+        <td>${cust || '—'}</td>
+        <td><span class="badge badge-gray">${eng || '—'}</span></td>
+        <td><span class="badge badge-blue">${clst || '—'}</span></td>
+        <td>${isPend ? '<span class="badge badge-amber">Pending</span>' : '<span class="badge badge-green">Clear</span>'}</td>
+        <td>${Number(dur) > 0 ? `<span class="badge ${Number(dur) > 3 ? 'badge-red' : 'badge-amber'}">${dur}d</span>` : '—'}</td>
+        <td>${isPend ? `<button class="btn sm" onclick="quickMark('${type}','${ph || ''}')">✅ Clear</button>` : '<span style="font-size:11px;color:var(--text3)">Done</span>'}</td>
+      </tr>`;
+        }).join('') +
+        '</tbody></table></div>' + (results.length > 30 ? `<p style="font-size:11px;color:var(--text3);margin-top:6px">Showing 30 of ${results.length}. Refine your search for more specific results.</p>` : '');
+      logActivity(`Search "${q}": ${results.length} result(s)`, 'info');
+    }
+
+    // NEW: Quick mark clear from search results
+    function quickMark(type, phone) {
+      document.getElementById('mark-type').value = type;
+      document.getElementById('mark-phone').value = phone;
+      showPanel('panel-mark');
+      markSearch();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
